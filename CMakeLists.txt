@@ -3,4 +3,4 @@ project(task2_phonebook C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(task2_phonebook main.c src/csv_helper.c libs/csv_helper.h)
+add_executable(task2_phonebook main.c src/csv_helper.c libs/csv_helper.h libs/BasicTypes.h)
