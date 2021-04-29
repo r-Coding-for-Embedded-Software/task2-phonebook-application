@@ -11,17 +11,17 @@
 
 int32_t main(void);
 void show_main_menu(void);
-void get_input(char* value);
+void get_input(const char* value);
 PersonStruct create_person(const char* value);
 void exit_program(void);
 
 int32_t main(void)
 {
     // EXIT Flag to check if the user want to exit the program
-    char exit_status = '0';
+    char_t exit_status = '0';
 
     // buffer string to store the input from user in each question
-    char input_value[MAX_CHAR];
+    char_t input_value[MAX_CHAR];
 
     // buffer int to store the input from user in each question
     int32_t input;
@@ -75,7 +75,7 @@ int32_t main(void)
                 get_input(input_value);
 
                 // Delete the entire row from the csv file
-                edit_row(FILE_NAME, input_value, NULL);
+                edit_row(FILE_NAME, input_value, "0");
                 show_main_menu();
                 break;
             }
@@ -89,7 +89,7 @@ int32_t main(void)
                     get_input(input_value);
                     field_to_edit = strdup(input_value);
 
-                    int16_t indx = search_element(FILE_NAME, field_to_edit);
+                    int32_t indx = search_element(FILE_NAME, field_to_edit);
                     if (indx == -1)
                     {
                         printf("Cannot edit/delete non-existing line\n");
@@ -100,11 +100,18 @@ int32_t main(void)
                     // If the person exists
                     char* row_value = NULL;
                     get_row(FILE_NAME, indx, &row_value);
+//                    char* rest_row_value = strdup(row_value);
 
                     PersonStruct temp_person;
-                    temp_person.name = strdup(strtok(row_value, ","));
-                    temp_person.email = strdup(strtok(NULL, ","));
-                    temp_person.phone = strdup(strtok(NULL, ","));
+//                    temp_person.name = strdup(strtok(row_value, ","));
+//                    temp_person.email = strdup(strtok(NULL, ","));
+//                    temp_person.phone = strdup(strtok(NULL, ","));
+
+                    temp_person.name = strdup(strtok_r(row_value, ",", &row_value));
+//                    printf("Row after 1 strtok_r: %s\n", rest_row_value);
+                    temp_person.email = strdup(strtok_r(row_value, ",", &row_value));
+//                    printf("Row after 2 strtok_r: %s\n", rest_row_value);
+                    temp_person.phone = strdup(strtok_r(row_value, ",", &row_value));
 
                     printf("Choose field to edit:\n"
                            "1. name\n"
@@ -218,7 +225,7 @@ void show_main_menu(void)
            "!!! To Exit the Program: Press 'q' !!!\n\n");
 }
 
-void get_input(char* value)
+void get_input(const char* value)
 {
     /* get input data from the user
      */

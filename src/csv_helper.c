@@ -175,8 +175,8 @@ void edit_row(const char* file_name, const char* word, const char* new_line)
                 {
                     fprintf(file_handler2, "%s", str);
                 }
-                    // If found the line
-                else if (new_line)
+                // If found the line
+                else if (strcmp(new_line, "0") != 0)
                 {
                     // write the line to the temp file
                     fprintf(file_handler2, "%s\n", new_line);
@@ -227,12 +227,18 @@ int32_t search_element(const char* file_name, const char* word)
             printf("Found %s in line %i\n", word, found_line_indx);
             print_row(file_name, found_line_indx);
             fclose(file_handler);
+            break;
         }
         line_indx++;
     }
 
-    // Close the file
-    fclose(file_handler);
-    printf("\"%s\" does not exist in the file\n", word);
+    // If the row is not found
+    if (found_line_indx == -1)
+    {
+        // Close the file
+        fclose(file_handler);
+        printf("\"%s\" does not exist in the file\n", word);
+    }
+
     return found_line_indx;
 }
