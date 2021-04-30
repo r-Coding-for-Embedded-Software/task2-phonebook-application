@@ -50,22 +50,22 @@ int32_t main(void)
             }
 
             case ADD:;
-                {
-                    // Create a new person from the user input
-                    PersonStruct person;
-                    person = create_person(input_value);
+            {
+                // Create a new person from the user input
+                PersonStruct person;
+                person = create_person(input_value);
 
-                    // Add the new person to the end of the csv file
-                    add_row(FILE_NAME, person);
+                // Add the new person to the end of the csv file
+                add_row(FILE_NAME, person);
 
-                    // remove added person from memory
-                    free(person.name);
-                    free(person.email);
-                    free(person.phone);
+                // remove added person from memory
+                free(person.name);
+                free(person.email);
+                free(person.phone);
 
-                    show_main_menu();
-                    break;
-                }
+                show_main_menu();
+                break;
+            }
 
 
             case DELETE:
@@ -82,115 +82,108 @@ int32_t main(void)
 
 
             case EDIT:;
+            {
+                // Get field to edit
+                char* field_to_edit;
+                printf("Write name or phone you want to edit from the DB:");
+                get_input(input_value);
+                field_to_edit = strdup(input_value);
+
+                int32_t indx = search_element(FILE_NAME, field_to_edit);
+                if (indx == -1)
                 {
-                    // Get field to edit
-                    char* field_to_edit;
-                    printf("Write name or phone you want to edit from the DB:");
-                    get_input(input_value);
-                    field_to_edit = strdup(input_value);
-
-                    int32_t indx = search_element(FILE_NAME, field_to_edit);
-                    if (indx == -1)
-                    {
-                        printf("Cannot edit/delete non-existing line\n");
-                        show_main_menu();
-                        break;
-                    }
-
-                    // If the person exists
-                    char* row_value = NULL;
-                    get_row(FILE_NAME, indx, &row_value);
-//                    char* rest_row_value = strdup(row_value);
-
-                    PersonStruct temp_person;
-//                    temp_person.name = strdup(strtok(row_value, ","));
-//                    temp_person.email = strdup(strtok(NULL, ","));
-//                    temp_person.phone = strdup(strtok(NULL, ","));
-
-                    temp_person.name = strdup(strtok_r(row_value, ",", &row_value));
-//                    printf("Row after 1 strtok_r: %s\n", rest_row_value);
-                    temp_person.email = strdup(strtok_r(row_value, ",", &row_value));
-//                    printf("Row after 2 strtok_r: %s\n", rest_row_value);
-                    temp_person.phone = strdup(strtok_r(row_value, ",", &row_value));
-
-                    printf("Choose field to edit:\n"
-                           "1. name\n"
-                           "2. email\n"
-                           "3. phone\n");
-
-                    get_input(input_value);
-                    char* choice = strdup(input_value);
-                    char new_line[MAX_CHAR] = {};
-
-                    // Edit the name only
-                    if (strcmp(choice, "1") == 0)
-                    {
-                        printf("Enter the new name:");
-                        get_input(input_value);
-                        char* new_field = strdup(input_value);
-
-                        sprintf(new_line, "%s,%s,%s", new_field, temp_person.email, temp_person.phone);
-
-                        // Edit (Replace) the entire row from the csv file
-                        edit_row(FILE_NAME, field_to_edit, new_line);
-                        free(new_field);
-                    }
-
-                        // Edit the email only
-                    else if (strcmp(choice, "2") == 0)
-                    {
-                        printf("Enter the new email:");
-                        get_input(input_value);
-                        char* new_field = strdup(input_value);
-
-                        sprintf(new_line, "%s,%s,%s", temp_person.name, new_field, temp_person.phone);
-
-                        edit_row(FILE_NAME, field_to_edit, new_line);
-                        free(new_field);
-                    }
-
-                        // Edit the phone only
-                    else if (strcmp(choice, "3") == 0)
-                    {
-                        printf("Enter the new phone:");
-                        get_input(input_value);
-                        char* new_field = strdup(input_value);
-
-                        sprintf(new_line, "%s,%s,%s", temp_person.name, temp_person.email, new_field);
-
-                        edit_row(FILE_NAME, field_to_edit, new_line);
-                        free(new_field);
-                    }
-                    else
-                    {
-                        /* Do nothing */
-                    }
-
-                    // remove variables from memory
-                    free(field_to_edit);
-                    free(choice);
-                    free(temp_person.name);
-                    free(temp_person.email);
-                    free(temp_person.phone);
-
+                    printf("Cannot edit/delete non-existing line\n");
                     show_main_menu();
                     break;
                 }
+
+                // If the person exists
+                char* row_value = NULL;
+                get_row(FILE_NAME, indx, &row_value);
+
+                PersonStruct temp_person;
+                temp_person.name = strdup(strtok(row_value, ","));
+                temp_person.email = strdup(strtok((char *) NULL, ","));
+                temp_person.phone = strdup(strtok((char *) NULL, ","));
+
+                printf("Choose field to edit:\n"
+                       "1. name\n"
+                       "2. email\n"
+                       "3. phone\n");
+
+                get_input(input_value);
+                char* choice = strdup(input_value);
+                char new_line[MAX_CHAR] = {};
+
+                // Edit the name only
+                if (strcmp(choice, "1") == 0)
+                {
+                    printf("Enter the new name:");
+                    get_input(input_value);
+                    char* new_field = strdup(input_value);
+
+                    sprintf(new_line, "%s,%s,%s", new_field, temp_person.email, temp_person.phone);
+
+                    // Edit (Replace) the entire row from the csv file
+                    edit_row(FILE_NAME, field_to_edit, new_line);
+                    free(new_field);
+                }
+
+                    // Edit the email only
+                else if (strcmp(choice, "2") == 0)
+                {
+                    printf("Enter the new email:");
+                    get_input(input_value);
+                    char* new_field = strdup(input_value);
+
+                    sprintf(new_line, "%s,%s,%s", temp_person.name, new_field, temp_person.phone);
+
+                    edit_row(FILE_NAME, field_to_edit, new_line);
+                    free(new_field);
+                }
+
+                    // Edit the phone only
+                else if (strcmp(choice, "3") == 0)
+                {
+                    printf("Enter the new phone:");
+                    get_input(input_value);
+                    char* new_field = strdup(input_value);
+
+                    sprintf(new_line, "%s,%s,%s", temp_person.name, temp_person.email, new_field);
+
+                    edit_row(FILE_NAME, field_to_edit, new_line);
+                    free(new_field);
+                }
+                else
+                {
+                    /* Do nothing */
+                }
+
+                // remove variables from memory
+                free(field_to_edit);
+                free(choice);
+                free(temp_person.name);
+                free(temp_person.email);
+                free(temp_person.phone);
+
+                show_main_menu();
+                break;
+            }
 
 
             case SEARCH:;
-                {
-                    // Get field to search
-                    char* field_to_search;
-                    printf("Write name or phone you want to search in the DB:");
-                    get_input(input_value);
-                    field_to_search = strdup(input_value);
+            {
+                // Get field to search
+                char* field_to_search;
+                printf("Write name or phone you want to search in the DB:");
+                get_input(input_value);
+                field_to_search = strdup(input_value);
 
-                    // Search for existing person in the csv file
-                    search_element(FILE_NAME, field_to_search);
-                    show_main_menu();
-                    break;
-                }
+                // Search for existing person in the csv file
+                search_element(FILE_NAME, field_to_search);
+                show_main_menu();
+                break;
+            }
 
 
             case EXIT_CODE:
